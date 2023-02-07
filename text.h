@@ -2,9 +2,8 @@
 #include <string.h>
 #define ll long long int
 FILE *fin;
-ll curpos = 0, line = 0;
-
 char str[50][103];
+ll line = 0, cnt = 0, i = 0, j = 0, k = 0;
 
 void moveleft()
 {
@@ -20,41 +19,41 @@ void save()
 
 void printtext()
 {
-    for(ll i=0;i<line;i++)
-    {
-        iText(25+i,446,str[i]);
-    }
+    // for (ll i = 0; i <= line; i++)
+    //     iText(15, 446 - 15 * i, str[i]);
 }
 
 void showtext()
 {
-    line=0;
-    ll j = 0, k = 0, cnt = 0;
-    fin = fopen ("1.txt", "r+");
-    while (true)
+    cnt = j = k = line = 0;
+    fin = fopen("1.txt", "r+");
+    while (1)
     {
-        char ch = fgetc (fin);
+        char ch = fgetc(fin);
         if (ch == EOF)
         {
             str[j][k] = '|';
             break;
         }
-        else if (cnt != 0 && (cnt % 100 == 0) || ch == '\n')
-        {
-            j++;
-            line++;
-        }
+
         else
         {
+            printf("%c", ch);
             str[j][k++] = ch;
-            printf("j=%d k=%d %c\n",j,k,ch);
+            printf("\nj= %d k = %d\n", j, k);
             cnt++;
+            if (cnt % 100 == 0)
+            {
+                printf("\nnewline\n");
+                j++;
+                k = 0;
+                line++;
+            }
         }
-
-
     }
-    printf ("%s\n", str[0]);
-    printf("line=%d",line);
-    for(int i=0;i<line;i++)
-        printf("%s\n",str[i]);
+
+    printf("line = %d cnt = %d", line, cnt);
+
+    for (ll i = 0; i <= line; i++)
+        printf("%s\n", str[i]);
 }
