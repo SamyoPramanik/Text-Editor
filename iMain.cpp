@@ -7,15 +7,19 @@
 void iDraw()
 {
     iClear();
-    iRectangle (10, 10, 1100, 450);
+    iSetColor(255, 255, 255);
+    iRectangle(10, 10, 900, 410);
     printtext();
+    draw_btns();
+    iSetColor(rr, gg, bb);
+    iFilledRectangle(curx, cury, 2, 14);
 }
 
 /*
     function iMouseMove() is called when the user presses and drags the mouse.
     (mx, my) is the position where the mouse pointer is.
 */
-void iMouseMove (int mx, int my)
+void iMouseMove(int mx, int my)
 {
     // place your codes here
 
@@ -24,11 +28,23 @@ void iMouseMove (int mx, int my)
         (mx, my) is the position where the mouse pointer is.
     */
 }
-void iMouse (int button, int state, int mx, int my)
+void iMouse(int button, int state, int mx, int my)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        printf ("\nx=%d y=%d", mx, my);
+        printf("\nx=%d y=%d", mx, my);
+
+        if (mx >= 950 && my >= 370 && mx <= 1200 && my <= 410)
+            showtext();
+
+        else
+        {
+            row = (int)floor((414 - my) * 1.0 / 14);
+            cury = 398 - 14 * row;
+
+            col = (int)ceil((mx - 15) * 1.0 / 12);
+            curx = 12 + 12 * col;
+        }
     }
 }
 
@@ -36,12 +52,11 @@ void iMouse (int button, int state, int mx, int my)
     function iKeyboard() is called whenever the user hits a key in keyboard.
     key- holds the ASCII value of the key pressed.
 */
-void iKeyboard (unsigned char key)
+void iKeyboard(unsigned char key)
 {
-    if (key == 'x' || key == 'X')
-    {
-        showtext();
-    }
+    insert(key);
+
+    printf("curx= = %lld cury = %lld\n", curx, cury);
 }
 
 /*
@@ -53,12 +68,38 @@ void iKeyboard (unsigned char key)
     GLUT_KEY_LEFT, GLUT_KEY_UP, GLUT_KEY_RIGHT, GLUT_KEY_DOWN, GLUT_KEY_PAGE UP,
     GLUT_KEY_PAGE DOWN, GLUT_KEY_HOME, GLUT_KEY_END, GLUT_KEY_INSERT
 */
-void iSpecialKeyboard (unsigned char key)
+void iSpecialKeyboard(unsigned char key)
 {
+    if (key == GLUT_KEY_UP)
+    {
+        cury += 14;
+        row--;
+    }
+
+    else if (key == GLUT_KEY_DOWN)
+    {
+        cury -= 14;
+        row++;
+    }
+
+    else if (key == GLUT_KEY_LEFT)
+    {
+        curx -= 12;
+        col--;
+    }
+
+    else if (key == GLUT_KEY_RIGHT)
+    {
+        curx += 12;
+        col++;
+    }
+
+    printf("row=%lld col=%lld", row, col);
 }
 
 int main()
 {
-    iInitialize (1200, 720, "Text Editor");
+    iSetTimer(800, cngcursor);
+    iInitialize(1200, 720, "Text Editor");
     return 0;
 }
