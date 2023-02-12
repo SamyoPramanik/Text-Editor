@@ -8,6 +8,7 @@ void iDraw()
 {
     iClear();
     iSetColor(255, 255, 255);
+    iText(12, 500, alert, GLUT_BITMAP_8_BY_13);
     iRectangle(10, 10, 900, 410);
     printtext();
     draw_btns();
@@ -37,6 +38,11 @@ void iMouse(int button, int state, int mx, int my)
         if (mx >= 950 && my >= 370 && mx <= 1200 && my <= 410)
             showtext();
 
+        else if (mx >= 930 && my >= 310 && mx <= 1180 && my <= 350)
+        {
+            save();
+        }
+
         else
         {
             row = (int)floor((414 - my) * 1.0 / 14);
@@ -54,7 +60,11 @@ void iMouse(int button, int state, int mx, int my)
 */
 void iKeyboard(unsigned char key)
 {
-    insert(key);
+    if ((key >= '0' && key <= 'z') || key == ' ')
+        insert(key);
+
+    else if (key == '\b')
+        backspace();
 
     printf("curx= = %lld cury = %lld\n", curx, cury);
 }
@@ -72,6 +82,8 @@ void iSpecialKeyboard(unsigned char key)
 {
     if (key == GLUT_KEY_UP)
     {
+        if (row == 0)
+            return;
         cury += 14;
         row--;
     }
@@ -84,14 +96,37 @@ void iSpecialKeyboard(unsigned char key)
 
     else if (key == GLUT_KEY_LEFT)
     {
-        curx -= 12;
-        col--;
+        if (row == 0 && col == 0)
+            return;
+
+        if (curx <= 12)
+        {
+            curx = 120;
+            cury += 14;
+            col = 9;
+            row--;
+        }
+        else
+        {
+            curx -= 12;
+            col--;
+        }
     }
 
     else if (key == GLUT_KEY_RIGHT)
     {
-        curx += 12;
-        col++;
+        if (curx >= 132)
+        {
+            curx = 24;
+            cury -= 14;
+            col = 1;
+            row++;
+        }
+        else
+        {
+            curx += 12;
+            col++;
+        }
     }
 
     printf("row=%lld col=%lld", row, col);

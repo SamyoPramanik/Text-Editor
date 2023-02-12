@@ -4,6 +4,7 @@
 #define ll long long int
 FILE *fin;
 char str[10][10];
+char alert[100];
 ll line = 0, cnt = 0, i = 0, j = 0, k = 0, r = 0, c = 0, curx = 12, cury = 398, row, col, rr = 255, gg = 255, bb = 255, show_cursor = 1;
 
 void cngcursor()
@@ -43,8 +44,21 @@ void insert(char ch)
     }
 }
 
+void backspace()
+{
+    char *first = &str[0][0];
+    for (ll i = row * 10 + col; i < cnt; i++)
+        *(first + i) = *(first + i + 1);
+
+    cnt--;
+}
+
 void save()
 {
+    fin = fopen("1.txt", "w");
+    fprintf(fin, "%s", str);
+    fclose(fin);
+    strcpy(alert, "File saved");
 }
 
 void printtext()
@@ -95,6 +109,10 @@ void showtext()
             }
         }
     }
+
+    fclose(fin);
+
+    strcpy(alert, "File opened");
 
     printf("\ncnt = %lld\n", cnt);
 
