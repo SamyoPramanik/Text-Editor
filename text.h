@@ -25,14 +25,22 @@ void insert(char ch)
     cnt++;
     char *first = &str[0][0];
 
-    for (ll i = cnt; i >= row * 5 + col; i--)
+    for (ll i = cnt; i >= row * 10 + col; i--)
         *(first + i) = *(first + i - 1);
 
-    str[row][col]=ch;
-}
-
-void moveright()
-{
+    str[row][col] = ch;
+    if (col % 10 == 0 && col > 0)
+    {
+        col = 1;
+        row++;
+        curx = 24;
+        cury -= 14;
+    }
+    else
+    {
+        col++;
+        curx += 12;
+    }
 }
 
 void save()
@@ -41,7 +49,7 @@ void save()
 
 void printtext()
 {
-    for (int i = 0; i <= r; i++)
+    for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
         {
