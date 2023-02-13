@@ -46,11 +46,28 @@ void insert(char ch)
 
 void backspace()
 {
+    if (row == 0 && col == 0)
+        return;
+
     char *first = &str[0][0];
     for (ll i = row * 10 + col; i < cnt; i++)
-        *(first + i) = *(first + i + 1);
+        *(first + i - 1) = *(first + i);
+
+    *(first + cnt - 1) = '\0';
 
     cnt--;
+    if (col == 0)
+    {
+        col = 9;
+        row--;
+        curx = 120;
+        cury += 14;
+    }
+    else
+    {
+        col--;
+        curx -= 12;
+    }
 }
 
 void save()
