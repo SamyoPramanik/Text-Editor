@@ -101,9 +101,9 @@ void iSpecialKeyboard(unsigned char key)
 
         if (curx <= 12)
         {
-            curx = 120;
+            curx = 12 * maxrc;
             cury += 14;
-            col = 9;
+            col = maxrc - 1;
             row--;
         }
         else

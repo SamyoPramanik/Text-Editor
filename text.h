@@ -2,8 +2,9 @@
 #include <string.h>
 #include <math.h>
 #define ll long long int
+#define maxrc 20
 FILE *fin;
-char str[10][10];
+char str[maxrc][maxrc];
 char alert[100];
 ll line = 0, cnt = 0, i = 0, j = 0, k = 0, r = 0, c = 0, curx = 12, cury = 398, row, col, rr = 255, gg = 255, bb = 255, show_cursor = 1;
 
@@ -26,11 +27,11 @@ void insert(char ch)
     cnt++;
     char *first = &str[0][0];
 
-    for (ll i = cnt; i >= row * 10 + col; i--)
+    for (ll i = cnt; i >= row * maxrc + col; i--)
         *(first + i) = *(first + i - 1);
 
     str[row][col] = ch;
-    if (col % 10 == 0 && col > 0)
+    if (col % maxrc == 0 && col > 0)
     {
         col = 1;
         row++;
@@ -50,7 +51,7 @@ void backspace()
         return;
 
     char *first = &str[0][0];
-    for (ll i = row * 10 + col; i < cnt; i++)
+    for (ll i = row * maxrc + col; i < cnt; i++)
         *(first + i - 1) = *(first + i);
 
     *(first + cnt - 1) = '\0';
@@ -58,9 +59,9 @@ void backspace()
     cnt--;
     if (col == 0)
     {
-        col = 9;
+        col = maxrc - 1;
         row--;
-        curx = 120;
+        curx = 12 * maxrc;
         cury += 14;
     }
     else
@@ -80,9 +81,9 @@ void save()
 
 void printtext()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < maxrc; i++)
     {
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < maxrc; j++)
         {
             char s[2];
             s[0] = str[i][j];
@@ -119,7 +120,7 @@ void showtext()
         {
             cnt++;
             str[r][c++] = ch;
-            if (cnt % 10 == 0)
+            if (cnt % maxrc == 0)
             {
                 r++;
                 c = 0;
@@ -135,7 +136,7 @@ void showtext()
 
     for (int i = 0; i <= r; i++)
     {
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < maxrc; j++)
         {
             printf("%c", str[i][j]);
         }
