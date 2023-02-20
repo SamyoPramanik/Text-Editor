@@ -79,6 +79,8 @@ void undo()
     while (*newstr)
         *first++ = *newstr++;
 
+    free(current.stt);
+
     st.pop();
 }
 
