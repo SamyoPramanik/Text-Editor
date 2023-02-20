@@ -12,7 +12,22 @@ char str[maxrc][maxrc];
 char alert[100];
 ll line = 0, cnt = 0, i = 0, j = 0, k = 0, r = 0, c = 0, curx = 12, cury = 398, row, col, rr = 255, gg = 255, bb = 255, show_cursor = 1;
 
-stack<char *> st;
+struct state
+{
+    char *stt;
+    int curx, cury, row, col;
+
+    state(char *stt_, int curx_, int cury_, int row_, int col_)
+    {
+        stt = stt_;
+        curx = curx_;
+        cury = cury_;
+        row = row_;
+        col = col_;
+    }
+};
+
+stack<state> st;
 
 void cngcursor()
 {
@@ -38,7 +53,7 @@ void commitchange()
     *chngstr = '\0';
     printf("\nchanged string =%s\n", firstpos);
 
-    st.push(firstpos);
+    st.push(state(firstpos, curx, cury, row, col));
     printf("stack size=%d\n", st.size());
 }
 
@@ -49,7 +64,13 @@ void undo()
     printf("undo called\n");
     char *first = &str[0][0];
     cnt = strlen(first);
-    char *newstr = st.top();
+
+    state current = st.top();
+    char *newstr = current.stt;
+    curx = current.curx;
+    cury = current.cury;
+    row = current.row;
+    col = current.col;
 
     for (int i = 0; i < maxrc * maxrc; i++)
         *(first + i) = '\0';
@@ -76,6 +97,7 @@ void movecursor(int mx, int my)
 
 void insert(char ch)
 {
+    commitchange();
     cnt++;
     char *first = &str[0][0];
 
@@ -101,6 +123,8 @@ void backspace()
 {
     if (row == 0 && col == 0)
         return;
+
+    commitchange();
 
     char *first = &str[0][0];
     for (ll i = row * maxrc + col; i < cnt; i++)

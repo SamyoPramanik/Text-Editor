@@ -66,13 +66,10 @@ void iKeyboard(unsigned char key)
     if ((key >= '0' && key <= 'z') || key == ' ')
     {
         insert(key);
-        commitchange();
     }
     else if (key == '\b')
     {
         backspace();
-        if (cnt > 0)
-            commitchange();
     }
     printf("curx= = %lld cury = %lld\n", curx, cury);
 }
