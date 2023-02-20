@@ -45,11 +45,10 @@ void iMouse(int button, int state, int mx, int my)
 
         else
         {
-            row = (int)floor((414 - my) * 1.0 / 14);
-            cury = 398 - 14 * row;
-
-            col = (int)ceil((mx - 15) * 1.0 / 12);
-            curx = 12 + 12 * col;
+            if (mx <= 910 && my <= 410)
+            {
+                movecursor(mx, my);
+            }
         }
     }
 }

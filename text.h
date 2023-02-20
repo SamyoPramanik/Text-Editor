@@ -22,6 +22,19 @@ void cngcursor()
     }
 }
 
+void movecursor(int mx, int my)
+{
+    row = (int)floor((414 - my) * 1.0 / 14);
+    if (row > maxrc)
+        row = maxrc;
+    cury = 398 - 14 * row;
+
+    col = (int)ceil((mx - 15) * 1.0 / 12);
+    if (col > maxrc)
+        col = maxrc;
+    curx = 12 + 12 * col;
+}
+
 void insert(char ch)
 {
     cnt++;
@@ -104,6 +117,10 @@ void draw_btns()
     iFilledRectangle(930, 310, 250, 40);
     iSetColor(255, 255, 255);
     iText(1030, 320, "Save", GLUT_BITMAP_TIMES_ROMAN_24);
+    iSetColor(100, 200, 100);
+    iFilledRectangle(930, 250, 250, 40);
+    iSetColor(255, 255, 255);
+    iText(1030, 260, "Undo", GLUT_BITMAP_TIMES_ROMAN_24);
 }
 
 void showtext()
