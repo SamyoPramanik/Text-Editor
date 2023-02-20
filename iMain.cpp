@@ -1,4 +1,3 @@
-#include "iGraphics.h"
 #include "text.h"
 
 /*
@@ -43,6 +42,11 @@ void iMouse(int button, int state, int mx, int my)
             save();
         }
 
+        else if (mx >= 930 && my >= 250 && mx <= 1120 && my <= 350)
+        {
+            undo();
+        }
+
         else
         {
             if (mx <= 910 && my <= 410)
@@ -60,11 +64,16 @@ void iMouse(int button, int state, int mx, int my)
 void iKeyboard(unsigned char key)
 {
     if ((key >= '0' && key <= 'z') || key == ' ')
+    {
         insert(key);
-
+        commitchange();
+    }
     else if (key == '\b')
+    {
         backspace();
-
+        if (cnt > 0)
+            commitchange();
+    }
     printf("curx= = %lld cury = %lld\n", curx, cury);
 }
 
@@ -114,7 +123,7 @@ void iSpecialKeyboard(unsigned char key)
 
     else if (key == GLUT_KEY_RIGHT)
     {
-        if (curx >= 132)
+        if (curx >= 12 * maxrc + 12)
         {
             curx = 24;
             cury -= 14;

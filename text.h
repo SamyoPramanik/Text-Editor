@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stack>
+#include "iGraphics.h"
+using namespace std;
+
 #define ll long long int
 #define maxrc 20
 FILE *fin;
 char str[maxrc][maxrc];
 char alert[100];
 ll line = 0, cnt = 0, i = 0, j = 0, k = 0, r = 0, c = 0, curx = 12, cury = 398, row, col, rr = 255, gg = 255, bb = 255, show_cursor = 1;
+
+stack<char *> st;
 
 void cngcursor()
 {
@@ -20,6 +26,39 @@ void cngcursor()
         rr = gg = bb = 255;
         show_cursor = 1;
     }
+}
+
+void commitchange()
+{
+    char *chngstr = (char *)malloc(maxrc * maxrc);
+    char *firstpos = chngstr;
+    char *first = &str[0][0];
+    while (*first)
+        *chngstr++ = *first++;
+    *chngstr = '\0';
+    printf("\nchanged string =%s\n", firstpos);
+
+    st.push(firstpos);
+    printf("stack size=%d\n", st.size());
+}
+
+void undo()
+{
+    if (st.empty())
+        return;
+    printf("undo called\n");
+    char *first = &str[0][0];
+    cnt = strlen(first);
+    char *newstr = st.top();
+
+    for (int i = 0; i < maxrc * maxrc; i++)
+        *(first + i) = '\0';
+
+    printf("\nundo string =%s\n", newstr);
+    while (*newstr)
+        *first++ = *newstr++;
+
+    st.pop();
 }
 
 void movecursor(int mx, int my)
@@ -68,6 +107,9 @@ void backspace()
         *(first + i - 1) = *(first + i);
 
     *(first + cnt - 1) = '\0';
+
+    for (int i = cnt; i < maxrc * maxrc; i++)
+        *(first + i) = '\0';
 
     cnt--;
     if (col == 0)
