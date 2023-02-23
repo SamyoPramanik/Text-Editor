@@ -33,6 +33,19 @@ struct state
 
 stack<state> st;
 
+void cngcursor();
+void commitchange();
+void undo();
+void movecursor_click(int, int);
+void insert(char);
+void backspace();
+void save();
+void printtext();
+void draw_btns();
+void showtext();
+bool validmove(ll, ll);
+void movecursor(ll, ll);
+
 void cngcursor()
 {
     if (show_cursor == 1)
@@ -90,15 +103,11 @@ void undo()
 
 void movecursor_click(int mx, int my)
 {
-    row = (int)floor((textareatop + charheight - my) * 1.0 / charheight);
-    if (row > maxrc)
-        row = maxrc;
-    cury = textareatop - 2 - charheight * row;
+    ll lrow = (int)floor((textareatop + charheight - my) * 1.0 / charheight);
+    ll lcol = (int)ceil((mx - textarealeft) * 1.0 / charwidth);
 
-    col = (int)ceil((mx - textarealeft) * 1.0 / charwidth);
-    if (col > maxrc)
-        col = maxrc;
-    curx = textarealeft - 3 + charwidth * col;
+    if (validmove(lrow, lcol))
+        movecursor(lrow, lcol);
 }
 
 void insert(char ch)
@@ -112,17 +121,9 @@ void insert(char ch)
 
     str[row][col] = ch;
     if (col % maxrc == 0 && col > 0)
-    {
-        col = 1;
-        row++;
-        curx = textarealeft - 3 + charwidth;
-        cury -= charheight;
-    }
+        movecursor(row + 1, 1);
     else
-    {
-        col++;
-        curx += charwidth;
-    }
+        movecursor(row, col + 1);
 }
 
 void backspace()
@@ -143,17 +144,9 @@ void backspace()
 
     cnt--;
     if (col == 0)
-    {
-        col = maxrc - 1;
-        row--;
-        curx = textarealeft - 3 + charwidth * (maxrc - 1);
-        cury += charheight;
-    }
+        movecursor(row - 1, maxrc - 1);
     else
-    {
-        col--;
-        curx -= charwidth;
-    }
+        movecursor(row, col - 1);
 }
 
 void save()
@@ -235,10 +228,21 @@ void showtext()
 
 bool validmove(ll lrow, ll lcol)
 {
+    printf(" lrow=%lld lcol=%lld\n", lrow, lcol);
     if (lrow > maxrc || lcol > maxrc)
         return false;
+
+    if (lrow == 0 && lcol == 0)
+        return true;
+
+    if (lcol < 0)
+        return false;
+    if (lrow < 0)
+        return false;
+
     if (str[lrow][lcol - 1] == '\0')
         return false;
+
     return true;
 }
 

@@ -87,8 +87,6 @@ void iSpecialKeyboard(unsigned char key)
 {
     if (key == GLUT_KEY_UP)
     {
-        if (row == 0)
-            return;
         if (validmove(row - 1, col))
             movecursor(row - 1, col);
     }
@@ -101,9 +99,6 @@ void iSpecialKeyboard(unsigned char key)
 
     else if (key == GLUT_KEY_LEFT)
     {
-        if (row == 0 && col == 0)
-            return;
-
         if (col <= 0)
         {
             if (validmove(row - 1, maxrc - 1))
