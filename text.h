@@ -10,7 +10,11 @@ using namespace std;
 FILE *fin;
 char str[maxrc][maxrc];
 char alert[100];
-ll line = 0, cnt = 0, i = 0, j = 0, k = 0, r = 0, c = 0, curx = 12, cury = 398, row, col, rr = 255, gg = 255, bb = 255, show_cursor = 1;
+ll charheight = 14;   // 14
+ll charwidth = 12;    // 12
+ll textarealeft = 15; // 15
+ll textareatop = 400; // 400
+ll line = 0, cnt = 0, i = 0, j = 0, k = 0, r = 0, c = 0, curx = textarealeft - 3, cury = textareatop - 2, row, col, rr = 255, gg = 255, bb = 255, show_cursor = 1;
 
 struct state
 {
@@ -84,17 +88,17 @@ void undo()
     st.pop();
 }
 
-void movecursor(int mx, int my)
+void movecursor_click(int mx, int my)
 {
-    row = (int)floor((414 - my) * 1.0 / 14);
+    row = (int)floor((textareatop + charheight - my) * 1.0 / charheight);
     if (row > maxrc)
         row = maxrc;
-    cury = 398 - 14 * row;
+    cury = textareatop - 2 - charheight * row;
 
-    col = (int)ceil((mx - 15) * 1.0 / 12);
+    col = (int)ceil((mx - textarealeft) * 1.0 / charwidth);
     if (col > maxrc)
         col = maxrc;
-    curx = 12 + 12 * col;
+    curx = textarealeft - 3 + charwidth * col;
 }
 
 void insert(char ch)
@@ -111,13 +115,13 @@ void insert(char ch)
     {
         col = 1;
         row++;
-        curx = 24;
-        cury -= 14;
+        curx = textarealeft - 3 + charwidth;
+        cury -= charheight;
     }
     else
     {
         col++;
-        curx += 12;
+        curx += charwidth;
     }
 }
 
@@ -142,13 +146,13 @@ void backspace()
     {
         col = maxrc - 1;
         row--;
-        curx = 12 * maxrc;
-        cury += 14;
+        curx = textarealeft - 3 + charwidth * (maxrc - 1);
+        cury += charheight;
     }
     else
     {
         col--;
-        curx -= 12;
+        curx -= charwidth;
     }
 }
 
@@ -170,7 +174,7 @@ void printtext()
             s[0] = str[i][j];
             s[1] = '\0';
             // printf("%s", s);
-            iText(15 + 12 * j, 400 - 14 * i, s);
+            iText(textarealeft + charwidth * j, textareatop - charheight * i, s);
         }
     }
 }
@@ -227,4 +231,21 @@ void showtext()
         }
         printf("\n");
     }
+}
+
+bool validmove(ll lrow, ll lcol)
+{
+    if (lrow > maxrc || lcol > maxrc)
+        return false;
+    if (str[lrow][lcol - 1] == '\0')
+        return false;
+    return true;
+}
+
+void movecursor(ll lrow, ll lcol)
+{
+    row = lrow;
+    col = lcol;
+    curx = textarealeft - 3 + charwidth * col;
+    cury = textareatop - 2 - charheight * row;
 }

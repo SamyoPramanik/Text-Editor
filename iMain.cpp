@@ -12,7 +12,7 @@ void iDraw()
     printtext();
     draw_btns();
     iSetColor(rr, gg, bb);
-    iFilledRectangle(curx, cury, 2, 14);
+    iFilledRectangle(curx, cury, 2, charheight);
 }
 
 /*
@@ -51,7 +51,7 @@ void iMouse(int button, int state, int mx, int my)
         {
             if (mx <= 910 && my <= 410)
             {
-                movecursor(mx, my);
+                movecursor_click(mx, my);
             }
         }
     }
@@ -89,14 +89,14 @@ void iSpecialKeyboard(unsigned char key)
     {
         if (row == 0)
             return;
-        cury += 14;
-        row--;
+        if (validmove(row - 1, col))
+            movecursor(row - 1, col);
     }
 
     else if (key == GLUT_KEY_DOWN)
     {
-        cury -= 14;
-        row++;
+        if (validmove(row + 1, col))
+            movecursor(row + 1, col);
     }
 
     else if (key == GLUT_KEY_LEFT)
@@ -104,33 +104,29 @@ void iSpecialKeyboard(unsigned char key)
         if (row == 0 && col == 0)
             return;
 
-        if (curx <= 12)
+        if (col <= 0)
         {
-            curx = 12 * maxrc;
-            cury += 14;
-            col = maxrc - 1;
-            row--;
+            if (validmove(row - 1, maxrc - 1))
+                movecursor(row - 1, maxrc - 1);
         }
         else
         {
-            curx -= 12;
-            col--;
+            if (validmove(row, col - 1))
+                movecursor(row, col - 1);
         }
     }
 
     else if (key == GLUT_KEY_RIGHT)
     {
-        if (curx >= 12 * maxrc + 12)
+        if (col >= maxrc)
         {
-            curx = 24;
-            cury -= 14;
-            col = 1;
-            row++;
+            if (validmove(row + 1, 1))
+                movecursor(row + 1, 1);
         }
         else
         {
-            curx += 12;
-            col++;
+            if (validmove(row, col + 1))
+                movecursor(row, col + 1);
         }
     }
 
