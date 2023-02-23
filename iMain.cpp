@@ -65,11 +65,11 @@ void iKeyboard(unsigned char key)
 {
     if ((key >= '!' && key <= 'z') || key == ' ')
     {
-        insert(key);
+        insert(key, row, col);
     }
     else if (key == '\b')
     {
-        backspace();
+        backspace(row, col);
     }
     printf("curx= = %lld cury = %lld\n", curx, cury);
 }
@@ -86,44 +86,16 @@ void iKeyboard(unsigned char key)
 void iSpecialKeyboard(unsigned char key)
 {
     if (key == GLUT_KEY_UP)
-    {
-        if (validmove(row - 1, col))
-            movecursor(row - 1, col);
-    }
+        move_up();
 
     else if (key == GLUT_KEY_DOWN)
-    {
-        if (validmove(row + 1, col))
-            movecursor(row + 1, col);
-    }
+        move_down();
 
     else if (key == GLUT_KEY_LEFT)
-    {
-        if (col <= 0)
-        {
-            if (validmove(row - 1, maxrc - 1))
-                movecursor(row - 1, maxrc - 1);
-        }
-        else
-        {
-            if (validmove(row, col - 1))
-                movecursor(row, col - 1);
-        }
-    }
+        move_left();
 
     else if (key == GLUT_KEY_RIGHT)
-    {
-        if (col >= maxrc)
-        {
-            if (validmove(row + 1, 1))
-                movecursor(row + 1, 1);
-        }
-        else
-        {
-            if (validmove(row, col + 1))
-                movecursor(row, col + 1);
-        }
-    }
+        move_right();
 
     printf("row=%lld col=%lld", row, col);
 }

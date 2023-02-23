@@ -45,6 +45,11 @@ void draw_btns();
 void showtext();
 bool validmove(ll, ll);
 void movecursor(ll, ll);
+void move_left();
+void move_right();
+void move_up();
+void move_down();
+void move_in_line(ll, ll);
 
 void cngcursor()
 {
@@ -112,37 +117,38 @@ void movecursor_click(int mx, int my)
         movecursor(lrow, lcol);
 }
 
-void insert(char ch)
+void insert(char ch, ll lrow, ll lcol)
 {
     commitchange();
     char *first = &str[0][0];
 
-    for (ll i = maxrc * maxrc - 2; i >= row * maxrc + col; i--)
+    for (ll i = maxrc * maxrc - 2; i >= lrow * maxrc + lcol; i--)
         *(first + i) = *(first + i - 1);
 
-    str[row][col] = ch;
-    if (col % maxrc == 0 && col > 0)
-        movecursor(row + 1, 1);
+    str[lrow][lcol] = ch;
+    if (lcol % maxrc == 0 && lcol > 0)
+        movecursor(lrow + 1, 1);
     else
-        movecursor(row, col + 1);
+        movecursor(lrow, lcol + 1);
 }
 
-void backspace()
+void backspace(ll lrow, ll lcol)
 {
-    if (row == 0 && col == 0)
+    if (lrow == 0 && lcol == 0)
         return;
 
     commitchange();
 
     char *first = &str[0][0];
-    for (ll i = row * maxrc + col; i < maxrc * maxrc; i++)
+    for (ll i = lrow * maxrc + lcol; i < maxrc * maxrc; i++)
         *(first + i - 1) = *(first + i);
 
     *(first + maxrc * maxrc - 1) = 14;
-    if (col == 0)
-        movecursor(row - 1, maxrc - 1);
-    else
-        movecursor(row, col - 1);
+    move_left();
+    // if (col == 0)
+    //     movecursor(lrow - 1, maxrc - 1);
+    // else
+    //     movecursor(lrow, lcol - 1);
 }
 
 void save()
@@ -247,4 +253,46 @@ void movecursor(ll lrow, ll lcol)
     col = lcol;
     curx = textarealeft - 3 + charwidth * col;
     cury = textareatop - 2 - charheight * row;
+}
+
+void move_left()
+{
+    if (col == 0)
+        move_in_line(row - 1, maxrc - 1);
+
+    else if (validmove(row, col - 1))
+        movecursor(row, col - 1);
+}
+
+void move_right()
+{
+    if (str[row][col] == 15 || col == maxrc)
+        movecursor(row + 1, 1);
+
+    else if (validmove(row, col + 1))
+        movecursor(row, col + 1);
+}
+
+void move_up()
+{
+    if (row == 0)
+        return;
+    move_in_line(row - 1, col);
+}
+
+void move_down()
+{
+    move_in_line(row + 1, col);
+}
+
+void move_in_line(ll lrow, ll lcol)
+{
+    for (ll curcol = lcol; curcol >= 0; curcol--)
+    {
+        if (validmove(lrow, curcol))
+        {
+            movecursor(lrow, curcol);
+            return;
+        }
+    }
 }
