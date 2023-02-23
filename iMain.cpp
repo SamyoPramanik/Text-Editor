@@ -130,6 +130,10 @@ void iSpecialKeyboard(unsigned char key)
 
 int main()
 {
+    for (ll i = 0; i < maxrc; i++)
+        for (ll j = 0; j < maxrc; j++)
+            str[i][j] = 14;
+
     iSetTimer(800, cngcursor);
     iInitialize(1200, 720, "Text Editor");
     return 0;

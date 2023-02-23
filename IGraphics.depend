@@ -43,7 +43,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1677133601 source:d:\igraphics\text_editor\imain.cpp
+1677134732 source:d:\igraphics\text_editor\imain.cpp
 	"text.h"
 
 1675345574 d:\igraphics\text_editor\igraphics.h
@@ -65,7 +65,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1677134299 d:\igraphics\text_editor\text.h
+1677138249 d:\igraphics\text_editor\text.h
 	<stdio.h>
 	<string.h>
 	<math.h>

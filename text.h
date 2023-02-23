@@ -62,12 +62,14 @@ void cngcursor()
 
 void commitchange()
 {
-    char *chngstr = (char *)malloc(maxrc * maxrc);
+    char *chngstr = (char *)malloc(maxrc * maxrc * sizeof(char));
+
     char *firstpos = chngstr;
+
     char *first = &str[0][0];
     while (*first)
         *chngstr++ = *first++;
-    *chngstr = '\0';
+    printf("\nsize=%d\nstr==", strlen(firstpos));
     printf("\nchanged string =%s\n", firstpos);
 
     st.push(state(firstpos, curx, cury, row, col));
@@ -90,10 +92,10 @@ void undo()
     col = current.col;
 
     for (int i = 0; i < maxrc * maxrc; i++)
-        *(first + i) = '\0';
+        *(first + i) = 14;
 
     printf("\nundo string =%s\n", newstr);
-    while (*newstr)
+    for (ll i = 1; i <= maxrc * maxrc; i++)
         *first++ = *newstr++;
 
     free(current.stt);
@@ -113,10 +115,9 @@ void movecursor_click(int mx, int my)
 void insert(char ch)
 {
     commitchange();
-    cnt++;
     char *first = &str[0][0];
 
-    for (ll i = cnt; i >= row * maxrc + col; i--)
+    for (ll i = maxrc * maxrc - 2; i >= row * maxrc + col; i--)
         *(first + i) = *(first + i - 1);
 
     str[row][col] = ch;
@@ -134,15 +135,10 @@ void backspace()
     commitchange();
 
     char *first = &str[0][0];
-    for (ll i = row * maxrc + col; i < cnt; i++)
+    for (ll i = row * maxrc + col; i < maxrc * maxrc; i++)
         *(first + i - 1) = *(first + i);
 
-    *(first + cnt - 1) = '\0';
-
-    for (int i = cnt; i < maxrc * maxrc; i++)
-        *(first + i) = '\0';
-
-    cnt--;
+    *(first + maxrc * maxrc - 1) = 14;
     if (col == 0)
         movecursor(row - 1, maxrc - 1);
     else
@@ -164,7 +160,10 @@ void printtext()
         for (int j = 0; j < maxrc; j++)
         {
             char s[2];
-            s[0] = str[i][j];
+            if (str[i][j] == 14)
+                s[0] = ' ';
+            else
+                s[0] = str[i][j];
             s[1] = '\0';
             // printf("%s", s);
             iText(textarealeft + charwidth * j, textareatop - charheight * i, s);
@@ -192,31 +191,23 @@ void showtext()
 {
     cnt = r = c = 0;
     fin = fopen("1.txt", "r");
-    while (true)
+    for (ll readch = 1; readch <= maxrc * maxrc; readch++)
     {
         char ch = fgetc(fin);
-        if (ch == EOF)
-            break;
-
-        else
+        str[r][c++] = ch;
+        if (readch % maxrc == 0)
         {
-            cnt++;
-            str[r][c++] = ch;
-            if (cnt % maxrc == 0)
-            {
-                r++;
-                c = 0;
-            }
+            r++;
+            c = 0;
         }
     }
-
     fclose(fin);
 
     strcpy(alert, "File opened");
 
     printf("\ncnt = %lld\n", cnt);
 
-    for (int i = 0; i <= r; i++)
+    for (int i = 0; i < maxrc; i++)
     {
         for (int j = 0; j < maxrc; j++)
         {
@@ -240,7 +231,7 @@ bool validmove(ll lrow, ll lcol)
     if (lrow < 0)
         return false;
 
-    if (str[lrow][lcol - 1] == '\0')
+    if (str[lrow][lcol - 1] == 14)
         return false;
 
     return true;
