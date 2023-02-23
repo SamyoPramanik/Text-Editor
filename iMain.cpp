@@ -63,7 +63,7 @@ void iMouse(int button, int state, int mx, int my)
 */
 void iKeyboard(unsigned char key)
 {
-    if ((key >= '0' && key <= 'z') || key == ' ')
+    if ((key >= '!' && key <= 'z') || key == ' ')
     {
         insert(key);
     }

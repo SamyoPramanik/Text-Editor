@@ -231,10 +231,14 @@ bool validmove(ll lrow, ll lcol)
     if (lrow < 0)
         return false;
 
-    if (str[lrow][lcol - 1] == 14)
-        return false;
+    char *first = &str[0][0];
 
-    return true;
+    if (*(first + lrow * maxrc + lcol - 1) != 14 || *(first + lrow * maxrc + lcol) != 14)
+    {
+        printf("%d %d\n", *(first + lrow * maxrc + lcol - 1), *(first + lrow * maxrc + lcol));
+        return true;
+    }
+    return false;
 }
 
 void movecursor(ll lrow, ll lcol)
