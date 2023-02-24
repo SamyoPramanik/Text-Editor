@@ -6,7 +6,7 @@
 using namespace std;
 
 #define ll long long int
-#define maxrc 20
+#define maxrc 50
 FILE *fin;
 char str[maxrc][maxrc];
 char alert[100];
@@ -101,7 +101,7 @@ void undo()
     for (int i = 0; i < maxrc * maxrc; i++)
         *(first + i) = 14;
 
-    printf("\nundo string =%s\n", newstr);
+    // printf("\nundo string =%s\n", newstr);
     for (ll i = 1; i <= maxrc * maxrc; i++)
         *first++ = *newstr++;
 
@@ -156,6 +156,14 @@ void backspace(ll lrow, ll lcol)
         return;
     }
 
+    if (*(first + maxrc * lrow + lcol) == 15 && lcol == 0)
+    {
+        remove15(lrow, lcol);
+        arrange();
+        move_in_line(lrow - 1, maxrc);
+        return;
+    }
+
     for (ll i = lrow * maxrc + lcol; i < maxrc * maxrc; i++)
         *(first + i - 1) = *(first + i);
 
@@ -205,11 +213,8 @@ void arrange()
     for (ll currow = 0; currow < maxrc; currow++)
         for (ll curcol = 0; curcol < maxrc; curcol++)
         {
-            printf("currow=%lld curcol=%lld\n", currow, curcol);
-
             if (*(first + currow * maxrc + curcol) == 14)
             {
-                printf("arrange currow=%lld curcol=%lld\n", currow, curcol);
                 remove14(currow, curcol);
                 curcol--;
             }
@@ -245,7 +250,6 @@ void printtext()
             else
                 s[0] = str[i][j];
             s[1] = '\0';
-            // printf("%s", s);
             iText(textarealeft + charwidth * j, textareatop - charheight * i, s);
         }
     }
@@ -284,25 +288,25 @@ void showtext()
     fclose(fin);
 
     strcpy(alert, "File opened");
+    movecursor(0, 0);
 
     printf("\ncnt = %lld\n", cnt);
 }
 
 void printstring()
 {
-    for (int i = 0; i < maxrc; i++)
-    {
-        for (int j = 0; j < maxrc; j++)
-        {
-            printf("%03d ", str[i][j]);
-        }
-        printf("\n");
-    }
+    // for (int i = 0; i < maxrc; i++)
+    // {
+    //     for (int j = 0; j < maxrc; j++)
+    //     {
+    //         printf("%03d ", str[i][j]);
+    //     }
+    //     printf("\n");
+    // }
 }
 
 bool validmove(ll lrow, ll lcol)
 {
-    printf(" lrow=%lld lcol=%lld\n", lrow, lcol);
     if (lrow > maxrc || lcol > maxrc)
         return false;
 
@@ -318,7 +322,6 @@ bool validmove(ll lrow, ll lcol)
 
     if (*(first + lrow * maxrc + lcol) == 15)
     {
-        printf("%d %d\n", *(first + lrow * maxrc + lcol - 1), *(first + lrow * maxrc + lcol));
         return true;
     }
 
@@ -364,7 +367,14 @@ void move_left()
 void move_right()
 {
     if (str[row][col] == 15 || col == maxrc)
-        movecursor(row + 1, 1);
+    {
+        if (str[row + 1][0] == 15)
+        {
+            movecursor(row + 1, 0);
+        }
+        else
+            movecursor(row + 1, 1);
+    }
 
     else if (validmove(row, col + 1))
         movecursor(row, col + 1);
@@ -384,12 +394,21 @@ void move_down()
 
 void move_in_line(ll lrow, ll lcol)
 {
-    for (ll curcol = lcol; curcol >= 0; curcol--)
+    bool allvalid;
+    for (ll curcol = 0; curcol <= lcol; curcol++)
     {
-        if (validmove(lrow, curcol))
+        if (validmove(lrow, curcol) && !validmove(lrow, curcol + 1))
         {
+            allvalid = false;
             movecursor(lrow, curcol);
             return;
         }
+        else if (validmove(lrow, curcol) && validmove(lrow, curcol + 1))
+            allvalid = true;
+        else
+            allvalid = false;
+
+        if (allvalid)
+            movecursor(lrow, lcol);
     }
 }
