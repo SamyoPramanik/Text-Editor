@@ -65,12 +65,16 @@ void iKeyboard(unsigned char key)
 {
     if ((key >= '!' && key <= 'z') || key == ' ')
     {
-        insert(key, row, col);
+        insert(key, row, col, 1);
     }
     else if (key == '\b')
     {
         backspace(row, col);
     }
+
+    else if (key == 13)
+        insert(15, row, col, 1);
+
     printf("curx= = %lld cury = %lld\n", curx, cury);
 }
 
@@ -104,7 +108,7 @@ int main()
 {
     for (ll i = 0; i < maxrc; i++)
         for (ll j = 0; j < maxrc; j++)
-            str[i][j] = 14;
+            str[i][j] = 16;
 
     iSetTimer(800, cngcursor);
     iInitialize(1200, 720, "Text Editor");

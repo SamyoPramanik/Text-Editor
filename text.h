@@ -37,8 +37,8 @@ void cngcursor();
 void commitchange();
 void undo();
 void movecursor_click(int, int);
-void insert(char);
-void backspace();
+void insert(char, ll, ll, ll);
+void backspace(ll, ll, ll);
 void save();
 void printtext();
 void draw_btns();
@@ -50,7 +50,11 @@ void move_right();
 void move_up();
 void move_down();
 void move_in_line(ll, ll);
-
+void arrange();
+void printstring();
+void find15();
+void remove14(ll, ll);
+void remove15(ll, ll);
 void cngcursor()
 {
     if (show_cursor == 1)
@@ -74,8 +78,6 @@ void commitchange()
     char *first = &str[0][0];
     while (*first)
         *chngstr++ = *first++;
-    printf("\nsize=%d\nstr==", strlen(firstpos));
-    printf("\nchanged string =%s\n", firstpos);
 
     st.push(state(firstpos, curx, cury, row, col));
     printf("stack size=%d\n", st.size());
@@ -117,19 +119,26 @@ void movecursor_click(int mx, int my)
         movecursor(lrow, lcol);
 }
 
-void insert(char ch, ll lrow, ll lcol)
+void insert(char ch, ll lrow, ll lcol, ll call_arrange)
 {
-    commitchange();
+    if (call_arrange == 1)
+        commitchange();
     char *first = &str[0][0];
 
     for (ll i = maxrc * maxrc - 2; i >= lrow * maxrc + lcol; i--)
         *(first + i) = *(first + i - 1);
 
     str[lrow][lcol] = ch;
-    if (lcol % maxrc == 0 && lcol > 0)
-        movecursor(lrow + 1, 1);
-    else
-        movecursor(lrow, lcol + 1);
+    if (call_arrange == 1)
+    {
+        arrange();
+        printstring();
+
+        if (ch == 15)
+            movecursor(row + 1, 0);
+        else
+            move_right();
+    }
 }
 
 void backspace(ll lrow, ll lcol)
@@ -140,15 +149,80 @@ void backspace(ll lrow, ll lcol)
     commitchange();
 
     char *first = &str[0][0];
+
+    if (*(first + maxrc * lrow + lcol - 1) == 14)
+    {
+        find15();
+        return;
+    }
+
     for (ll i = lrow * maxrc + lcol; i < maxrc * maxrc; i++)
         *(first + i - 1) = *(first + i);
 
-    *(first + maxrc * maxrc - 1) = 14;
+    *(first + maxrc * maxrc - 1) = 16;
+
+    arrange();
     move_left();
-    // if (col == 0)
-    //     movecursor(lrow - 1, maxrc - 1);
-    // else
-    //     movecursor(lrow, lcol - 1);
+}
+
+void remove15(ll lrow, ll lcol)
+{
+    char *first = &str[0][0];
+    for (ll i = lrow * maxrc + lcol; i < maxrc * maxrc; i++)
+        *(first + i) = *(first + i + 1);
+}
+
+void find15()
+{
+    char *first = &str[0][0];
+    ll lrow = row - 1;
+    ll lcol = maxrc - 1;
+    for (ll i = maxrc - 1; i >= 0; i--)
+    {
+        if (*(first + maxrc * lrow + i) == 15)
+        {
+            remove15(lrow, i);
+            movecursor(lrow, i);
+            arrange();
+            return;
+        }
+    }
+}
+
+void remove14(ll lrow, ll lcol)
+{
+    char *first = &str[0][0];
+    for (ll i = lrow * maxrc + lcol; i < maxrc * maxrc; i++)
+        *(first + i) = *(first + i + 1);
+
+    *(first + maxrc * maxrc - 1) = 16;
+}
+
+void arrange()
+{
+    char *first = &str[0][0];
+
+    for (ll currow = 0; currow < maxrc; currow++)
+        for (ll curcol = 0; curcol < maxrc; curcol++)
+        {
+            printf("currow=%lld curcol=%lld\n", currow, curcol);
+
+            if (*(first + currow * maxrc + curcol) == 14)
+            {
+                printf("arrange currow=%lld curcol=%lld\n", currow, curcol);
+                remove14(currow, curcol);
+                curcol--;
+            }
+
+            else if (*(first + currow * maxrc + curcol) == 15)
+            {
+                for (ll inscol = curcol + 1; inscol < maxrc; inscol++)
+                    insert(14, currow, inscol, 0);
+                currow++;
+                curcol = -1;
+            }
+            // printstring();
+        }
 }
 
 void save()
@@ -166,7 +240,7 @@ void printtext()
         for (int j = 0; j < maxrc; j++)
         {
             char s[2];
-            if (str[i][j] == 14)
+            if (str[i][j] == 14 || str[i][j] == 15 || str[i][j] == 16)
                 s[0] = ' ';
             else
                 s[0] = str[i][j];
@@ -212,12 +286,15 @@ void showtext()
     strcpy(alert, "File opened");
 
     printf("\ncnt = %lld\n", cnt);
+}
 
+void printstring()
+{
     for (int i = 0; i < maxrc; i++)
     {
         for (int j = 0; j < maxrc; j++)
         {
-            printf("%c", str[i][j]);
+            printf("%03d ", str[i][j]);
         }
         printf("\n");
     }
@@ -239,9 +316,29 @@ bool validmove(ll lrow, ll lcol)
 
     char *first = &str[0][0];
 
-    if (*(first + lrow * maxrc + lcol - 1) != 14 || *(first + lrow * maxrc + lcol) != 14)
+    if (*(first + lrow * maxrc + lcol) == 15)
     {
         printf("%d %d\n", *(first + lrow * maxrc + lcol - 1), *(first + lrow * maxrc + lcol));
+        return true;
+    }
+
+    if (*(first + lrow * maxrc + lcol) == 14)
+    {
+        return false;
+    }
+
+    if (*(first + lrow * maxrc + lcol - 1) == 14 && *(first + lrow * maxrc + lcol) != 14)
+    {
+        return true;
+    }
+
+    if (*(first + lrow * maxrc + lcol - 1) != 16 && *(first + lrow * maxrc + lcol) == 16)
+    {
+        return true;
+    }
+
+    if (*(first + lrow * maxrc + lcol) != 14 && *(first + lrow * maxrc + lcol) != 15 && *(first + lrow * maxrc + lcol) != 16)
+    {
         return true;
     }
     return false;
